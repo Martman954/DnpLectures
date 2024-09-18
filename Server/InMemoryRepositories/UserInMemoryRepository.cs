@@ -1,8 +1,9 @@
 ﻿using Entities;
+using RepositoryContracts;
 
 namespace InMemoryRepositories;
 
-public class UserInMemoryRepository
+public class UserInMemoryRepository : IUserRepository
 {
     List<User> users;
 
@@ -11,17 +12,17 @@ public class UserInMemoryRepository
         users = new List<User>();
     }
     
-    public Task<User> Add(User user)
+    public Task<User> AddAsync(User user)
     {
         user.Id = users.Any() ? users.Max(p => p.Id) + 1 : 1;
         users.Add(user);
         return Task.FromResult(user);
     }
 
-    public Task Update(User user)
+    public Task UpdateAsync(User user)
     {
         User? existingUser = users.SingleOrDefault(p => p.Id == user.Id);
-        if (existingUser != null)
+        if (existingUser is null)
         {
             throw new InvalidOperationException($"User with ID '{user.Id}' not found");
         }
@@ -32,7 +33,7 @@ public class UserInMemoryRepository
         return Task.CompletedTask;
     }
 
-    public Task Delete(int id)
+    public Task DeleteAsync(int id)
     {
         User? userToRemove = users.SingleOrDefault(p => p.Id == id);
         if (userToRemove != null)
@@ -44,18 +45,27 @@ public class UserInMemoryRepository
         return Task.CompletedTask;
     }
 
-    public Task<User> GetSingle(int id)
+    public Task<User> GetSingleAsync(int id)
     {
-        User? user = users.SingleOrDefault(p => p.Id == id);
-        if (user != null)
+        // User? user = users.SingleOrDefault(p => p.Id == id);
+        
+        foreach (User userToGet in users)
+        {
+            if (userToGet.Id == id)
+            {
+                return Task.FromResult(userToGet);
+            }
+        }
+        throw new InvalidOperationException($"User with ID '{id}' not found");
+        
+        /*if (user == null)
         {
             throw new InvalidOperationException($"User with ID '{id}' not found");
         }
-        
-        return Task.FromResult(user);
+        return Task.FromResult(user);*/
     }
 
-    public IQueryable<User> GetMany()
+    public IQueryable<User> GetManyAsync()
     {
         return users.AsQueryable();
     }

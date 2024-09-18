@@ -12,14 +12,14 @@ public class CommentInMemoryRepository : ICommentRepository
         comments = new List<Comment>();
     }
     
-    public Task<Comment> Add(Comment comment)
+    public Task<Comment> AddAsync(Comment comment)
     {
         comment.Id = comments.Any() ? comments.Max(p => p.Id) + 1 : 1;
         comments.Add(comment);
         return Task.FromResult(comment);
     }
 
-    public Task Update(Comment comment)
+    public Task UpdateAsync(Comment comment)
     {
         Comment? existingComment = comments.SingleOrDefault(p => p.Id == comment.Id);
         if (existingComment != null)
@@ -33,7 +33,7 @@ public class CommentInMemoryRepository : ICommentRepository
         return Task.CompletedTask;
     }
 
-    public Task Delete(int id)
+    public Task DeleteAsync(int id)
     {
         Comment? commentToRemove = comments.SingleOrDefault(p => p.Id == id);
         if (commentToRemove != null)
@@ -45,7 +45,7 @@ public class CommentInMemoryRepository : ICommentRepository
         return Task.CompletedTask;
     }
 
-    public Task<Comment> GetSingle(int id)
+    public Task<Comment> GetSingleAsync(int id)
     {
         Comment? comment = comments.SingleOrDefault(p => p.Id == id);
         if (comment != null)
@@ -56,7 +56,7 @@ public class CommentInMemoryRepository : ICommentRepository
         return Task.FromResult(comment);
     }
 
-    public IQueryable<Comment> GetMany()
+    public IQueryable<Comment> GetManyAsync()
     {
         return comments.AsQueryable();
     }

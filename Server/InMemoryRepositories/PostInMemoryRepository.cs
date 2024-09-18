@@ -12,14 +12,14 @@ public class PostInMemoryRepository : IPostRepository
         posts = new List<Post>();
     }
     
-    public Task<Post> Add(Post post)
+    public Task<Post> AddAsync(Post post)
     {
         post.Id = posts.Any() ? posts.Max(p => p.Id) + 1 : 1;
         posts.Add(post);
         return Task.FromResult(post);
     }
 
-    public Task Update(Post post)
+    public Task UpdateAsync(Post post)
     {
         Post? existingPost = posts.SingleOrDefault(p => p.Id == post.Id);
         if (existingPost != null)
@@ -33,7 +33,7 @@ public class PostInMemoryRepository : IPostRepository
         return Task.CompletedTask;
     }
 
-    public Task Delete(int id)
+    public Task DeleteAsync(int id)
     {
         Post? postToRemove = posts.SingleOrDefault(p => p.Id == id);
         if (postToRemove != null)
@@ -45,7 +45,7 @@ public class PostInMemoryRepository : IPostRepository
         return Task.CompletedTask;
     }
 
-    public Task<Post> GetSingle(int id)
+    public Task<Post> GetSingleAsync(int id)
     {
         Post? post = posts.SingleOrDefault(p => p.Id == id);
         if (post != null)
@@ -56,7 +56,7 @@ public class PostInMemoryRepository : IPostRepository
         return Task.FromResult(post);
     }
 
-    public IQueryable<Post> GetMany()
+    public IQueryable<Post> GetManyAsync()
     {
         return posts.AsQueryable();
     }
