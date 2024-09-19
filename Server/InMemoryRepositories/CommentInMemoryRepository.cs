@@ -45,10 +45,10 @@ public class CommentInMemoryRepository : ICommentRepository
         return Task.CompletedTask;
     }
 
-    public Task<Comment> GetSingleAsync(int id)
+    public Task<Comment?> GetSingleAsync(int id)
     {
         Comment? comment = comments.SingleOrDefault(p => p.Id == id);
-        if (comment != null)
+        if (comment == null)
         {
             throw new InvalidOperationException($"Comment with ID '{id}' not found");
         }

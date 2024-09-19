@@ -10,6 +10,16 @@ public class UsersManagerView
     public UsersManagerView(IUserRepository userRepository)
     {
         this.userRepository = userRepository;
+
+        DummyData();
+    }
+
+    private void DummyData()
+    {
+        _ = createUserAsync("Marty", "Party");
+        _ = createUserAsync("Torpedo", "Fifty");
+        _ = createUserAsync("Samo", "Susic");
+        _ = createUserAsync("Gengster", "Prankster");
     }
 
     public async Task<User> createUserAsync(string name, string password)

@@ -48,7 +48,7 @@ public class PostInMemoryRepository : IPostRepository
     public Task<Post> GetSingleAsync(int id)
     {
         Post? post = posts.SingleOrDefault(p => p.Id == id);
-        if (post != null)
+        if (post == null)
         {
             throw new InvalidOperationException($"Post with ID '{id}' not found");
         }

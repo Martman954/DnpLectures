@@ -47,22 +47,14 @@ public class UserInMemoryRepository : IUserRepository
 
     public Task<User> GetSingleAsync(int id)
     {
-        // User? user = users.SingleOrDefault(p => p.Id == id);
+        User? user = users.SingleOrDefault(p => p.Id == id);
+
         
-        foreach (User userToGet in users)
-        {
-            if (userToGet.Id == id)
-            {
-                return Task.FromResult(userToGet);
-            }
-        }
-        throw new InvalidOperationException($"User with ID '{id}' not found");
-        
-        /*if (user == null)
+        if (user == null)
         {
             throw new InvalidOperationException($"User with ID '{id}' not found");
         }
-        return Task.FromResult(user);*/
+        return Task.FromResult(user);
     }
 
     public IQueryable<User> GetManyAsync()
