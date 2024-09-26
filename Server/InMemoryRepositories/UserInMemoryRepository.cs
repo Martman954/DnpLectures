@@ -19,7 +19,7 @@ public class UserInMemoryRepository : IUserRepository
         return Task.FromResult(user);
     }
 
-    public Task UpdateAsync(User user)
+    public Task<User> UpdateAsync(User user)
     {
         User? existingUser = users.SingleOrDefault(p => p.Id == user.Id);
         if (existingUser is null)
@@ -30,10 +30,10 @@ public class UserInMemoryRepository : IUserRepository
         users.Remove(existingUser);
         
         users.Add(user);
-        return Task.CompletedTask;
+        return Task.FromResult(user);
     }
 
-    public Task DeleteAsync(int id)
+    public Task<User> DeleteAsync(int id)
     {
         User? userToRemove = users.SingleOrDefault(p => p.Id == id);
         if (userToRemove != null)
@@ -42,7 +42,7 @@ public class UserInMemoryRepository : IUserRepository
         }
 
         users.Remove(userToRemove);
-        return Task.CompletedTask;
+        return Task.FromResult(userToRemove);
     }
 
     public Task<User> GetSingleAsync(int id)

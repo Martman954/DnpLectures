@@ -19,7 +19,7 @@ public class CommentInMemoryRepository : ICommentRepository
         return Task.FromResult(comment);
     }
 
-    public Task UpdateAsync(Comment comment)
+    public async Task<Comment> UpdateAsync(Comment comment)
     {
         Comment? existingComment = comments.SingleOrDefault(p => p.Id == comment.Id);
         if (existingComment != null)
@@ -30,10 +30,10 @@ public class CommentInMemoryRepository : ICommentRepository
         comments.Remove(existingComment);
         
         comments.Add(comment);
-        return Task.CompletedTask;
+        return comment;
     }
 
-    public Task DeleteAsync(int id)
+    public Task<Comment> DeleteAsync(int id)
     {
         Comment? commentToRemove = comments.SingleOrDefault(p => p.Id == id);
         if (commentToRemove != null)
@@ -42,10 +42,10 @@ public class CommentInMemoryRepository : ICommentRepository
         }
 
         comments.Remove(commentToRemove);
-        return Task.CompletedTask;
+        return Task.FromResult(commentToRemove);
     }
 
-    public Task<Comment?> GetSingleAsync(int id)
+    public Task<Comment> GetSingleAsync(int id)
     {
         Comment? comment = comments.SingleOrDefault(p => p.Id == id);
         if (comment == null)

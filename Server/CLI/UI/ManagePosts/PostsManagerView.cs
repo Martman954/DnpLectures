@@ -17,10 +17,7 @@ public class PostsManagerView
 
     private void DummyData()
     {
-        _ = createPostAsync("MisterFirstPost", "BlaBLALDALDASPdAdapDASMDPASMDSKAFMASSAFMAFA", 1);
-        _ = createPostAsync("SecondPpost", "SomeStufffdIdkWhatTO Wtrirjte amz,pre", 3);
-        _ = createPostAsync("OmfgTHirdPme", "WordsOWrldsOWrkdsWORkds", 2);
-        _ = createPostAsync("ItsSooLateIwannasleep", "!SDSDJIOASJDIASFJOASFJIOAJFOPAFOPA", 4);
+
     }
 
 
