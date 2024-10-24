@@ -21,7 +21,7 @@ public class CommentsManagerView
 
     public async Task<Comment> createCommentAsync(string body,int postId, int userId)
     {
-        Comment comment = new Comment(body, postId, userId);
+        Comment comment = null;
         return await commentRepository.AddAsync(comment);
     }
 

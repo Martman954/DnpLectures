@@ -21,7 +21,7 @@ public class UsersManagerView
 
     public async Task<User> createUserAsync(string name, string password)
     {
-        User user = new User(name,password);
+        User user = null;
         return await userRepository.AddAsync(user);
     }
 

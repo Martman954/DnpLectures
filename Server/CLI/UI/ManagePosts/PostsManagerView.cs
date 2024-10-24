@@ -23,7 +23,7 @@ public class PostsManagerView
 
     public async Task<Post> createPostAsync(string title, string body, int userId)
     {
-        Post post = new Post(title, body, userId);
+        Post post = null;
         return await postRepository.AddAsync(post);
     }
 
