@@ -44,7 +44,7 @@ public class PostsController(IPostRepository postRepository, IUserRepository use
 
     [HttpGet("{id}")]
     public async Task<ActionResult<PostDto>> GetPost(int id) {
-        Post post = await postRepository.GetSingleAsync(id);
+        Post post = await postRepository.GetSingleAsync(id-1);
         PostDto postDto = new() {
             Id = post.Id,
             Title = post.Title,

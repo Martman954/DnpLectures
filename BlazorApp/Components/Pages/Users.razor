@@ -1,0 +1,46 @@
+@page "/Users"
+@using System.Collections
+@using ApiContracts
+@using BlazorApp.Services
+@inject IUserService UserService
+
+<PageTitle>Users</PageTitle>
+
+<h1>Users</h1>
+
+<input type="text" @bind="username" placeholder="Search by username" />
+<button @onclick="SearchUsers">Search</button>
+
+
+@if (users == null)
+{
+    <p><em>Loading..</em></p>
+}
+else
+{
+    <ul>
+        @foreach (UserDto user in users)
+        {
+            <li>user.Id : @user.Id <em>@user.Username</em></li>
+        }
+    </ul>
+}
+
+@code {
+    protected ICollection? users;
+
+    private string username;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        users = (ICollection)(await UserService.GetUsers(""))!; // TODO: Fix ICollections stuff
+    }
+
+    private async Task SearchUsers()
+    {
+        users = (ICollection?)await UserService.GetUsers(username);
+    }
+}
+
+
+

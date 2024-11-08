@@ -40,7 +40,7 @@ public class UserController(IUserRepository userRepository) : ControllerBase {
     
     [HttpGet("{id}")]
     public async Task<ActionResult<UserDto>> GetUser(int id) {
-        User user = await userRepository.GetSingleAsync(id);
+        User user = await userRepository.GetSingleAsync(id-1);
         UserDto userDto = new() {
             Id = user.Id,
             Username = user.Username

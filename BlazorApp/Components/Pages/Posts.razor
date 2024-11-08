@@ -1,0 +1,44 @@
+@page "/Posts"
+@using System.Collections
+@using ApiContracts
+@using BlazorApp.Services
+@inject IPostService PostService
+
+<PageTitle>Posts</PageTitle>
+
+<h1>All Users</h1>
+
+<input type="text" @bind="title" placeholder="Search by name of the post" />
+<button @onclick="SearchUsers">Search</button>
+
+
+@if (posts == null)
+{
+    <p><em>Loading..</em></p>
+}
+else
+{
+    <ul>
+        @foreach (PostDto post in posts)
+        {
+            <li>post.Id : @post.Id <em>@post.Title, @post.Author</em> <br/>
+                @post.Body</li>
+        }
+    </ul>
+}
+
+@code {
+    protected ICollection? posts;
+
+    private string title;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        posts = (ICollection)(await PostService.GetPosts(""))!; // TODO: Fix ICollections stuff
+    }
+
+    private async Task SearchUsers()
+    {
+        posts = (ICollection?)await PostService.GetPosts(title);
+    }
+}
