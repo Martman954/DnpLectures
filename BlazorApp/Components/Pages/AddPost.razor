@@ -1,15 +1,38 @@
 @page "/AddPost"
-@using System.Collections
 @using ApiContracts
 @using BlazorApp.Services
 @inject IPostService PostService
+@inject NavigationManager Navigation
 
 <PageTitle>AddPost</PageTitle>
 
 <h1>Add a post</h1>
+<div>
+    <label>Title:</label>
+    <InputText @bind-Value="title" class="form-control" />
+</div>
 
+<div>
+    <label>Body:</label>
+    <textarea @bind="body" rows="5" class="form-control" placeholder="Enter the post content..."></textarea>
+</div>
+
+<button @onclick="SubmitPost">Add</button>
+    
 
 
 @code {
+    private string title, body;
 
+    CreatePostDto newPost;
+    
+    private async Task SubmitPost()
+    {
+        newPost.UserId = 1; // TODO: Authentification stuff
+        newPost.Title = title;
+        newPost.Body = body;
+        await PostService.AddPostAsync(newPost);
+        
+        Navigation.NavigateTo("/Posts");
+    }
 }

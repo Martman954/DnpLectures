@@ -54,7 +54,7 @@ public class CommentsController(
 
     [HttpGet("{id}")]
     public async Task<ActionResult<CommentDto>> GetComment(int id) {
-        Comment comment = await commentRepository.GetSingleAsync(id);
+        Comment comment = await commentRepository.GetSingleAsync(id-1);
         CommentDto commentDto = new() {
             Id = comment.Id,
             Body = comment.Body,

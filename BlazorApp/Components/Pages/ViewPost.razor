@@ -1,0 +1,63 @@
+﻿@page "/Posts/{postId:int}"
+@using ApiContracts
+@using BlazorApp.Services
+@inject IPostService PostService
+@inject ICommentService CommentService
+@inject NavigationManager Navigation
+
+<PageTitle>View Post</PageTitle>
+
+<h1>TITLE: <em>@post?.Title</em></h1>
+<h3>AUTHOR:<em> @post?.Author</em></h3>
+<p>@post?.Body</p>
+
+<h4>Comments</h4>
+<div>
+    <label>Write a comment:</label>
+    <textarea @bind="body" rows="5" class="form-control" placeholder="Enter comment..."></textarea>
+    <button @onclick="SubmitComment">Submit</button>
+</div>
+<ul>
+    @foreach (var comment in comments)
+    {
+        <li>
+            <strong>@comment.AuthorUsername:</strong> @comment.Body
+        </li>
+    }
+</ul>
+
+@code {
+    [Parameter] public int postId { get; set; }
+
+    private int userId = 1; // TODO: authentification: placeholder "1"
+    private string body;
+    private PostDto? post;
+    private ICollection<CommentDto> comments = new List<CommentDto>();
+    
+
+    // This will fire every time the parameter changes (like when postId changes)
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadPostData();
+    }
+
+    private async Task SubmitComment()
+    {
+        CreateCommentDto newComment = new CreateCommentDto();
+        newComment.Body = body;
+        newComment.PostId = postId;
+        newComment.UserId = userId;
+        await CommentService.AddCommentAsync(newComment);
+        
+        body = string.Empty;
+        
+        await LoadPostData();
+   }
+
+    private async Task LoadPostData()
+    {
+        post = await PostService.GetPostAsync(postId);
+        comments = (await CommentService.GetComments(postId)) ?? new List<CommentDto>();
+    }
+
+}

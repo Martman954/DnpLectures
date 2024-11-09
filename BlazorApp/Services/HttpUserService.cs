@@ -12,11 +12,18 @@ public class HttpUserService : IUserService
     {
         this.client = client;
     }
+
     public async Task<UserDto?> AdduserAsync(CreateUserDto request)
     {
-        var response = await client.PostAsJsonAsync("User", request);
-        response.EnsureSuccessStatusCode(); // Throw if not a success code
-        return await response.Content.ReadFromJsonAsync<UserDto>();
+        HttpResponseMessage httpResponse = await client.PostAsJsonAsync("users", request);
+        string response = await httpResponse.Content.ReadAsStringAsync();
+        if (!httpResponse.IsSuccessStatusCode)
+        {
+            throw new Exception(response);
+        }
+
+        return JsonSerializer.Deserialize<UserDto>(response,
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
     }
 
     public async Task<UserDto?> GetUserAsync(int id)
@@ -24,7 +31,6 @@ public class HttpUserService : IUserService
         return await client.GetFromJsonAsync<UserDto>($"User/{id}");
     }
 
-    
 
     public async Task<ICollection<UserDto>?> GetUsers(string username)
     {
@@ -35,17 +41,18 @@ public class HttpUserService : IUserService
         {
             throw new Exception($"Error: (" + response.StatusCode + "), ( " + response.Content + ")");
         }
-        
-        ICollection<UserDto>? users = JsonSerializer.Deserialize<ICollection<UserDto>>(content, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+
+        ICollection<UserDto>? users = JsonSerializer.Deserialize<ICollection<UserDto>>(content,
+            new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
         return users;
     }
 
     public async Task DeleteUserAsync(int id)
     {
-        var response = await client.DeleteAsync($"User/{id}");  // Endpoint: /User/{id}
+        var response = await client.DeleteAsync($"User/{id}"); // Endpoint: /User/{id}
         response.EnsureSuccessStatusCode();
     }
 }

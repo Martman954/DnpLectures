@@ -44,7 +44,7 @@ public class HttpPostService : IPostService
 
     public async Task DeletePostAsync(int id)
     {
-        var response = await client.DeleteAsync($"Posts/{id}");  // Endpoint: /User/{id}
+        var response = await client.DeleteAsync($"Posts/{id}"); 
         response.EnsureSuccessStatusCode();
     }
 }

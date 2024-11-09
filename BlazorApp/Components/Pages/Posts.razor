@@ -3,13 +3,16 @@
 @using ApiContracts
 @using BlazorApp.Services
 @inject IPostService PostService
+@inject NavigationManager Navigation
 
 <PageTitle>Posts</PageTitle>
 
-<h1>All Users</h1>
+<h1>All Posts</h1>
 
 <input type="text" @bind="title" placeholder="Search by name of the post" />
 <button @onclick="SearchUsers">Search</button>
+<br/>
+<a href="/AddPost" class="btn btn-primary">Add New Post</a>
 
 
 @if (posts == null)
@@ -22,7 +25,9 @@ else
         @foreach (PostDto post in posts)
         {
             <li>post.Id : @post.Id <em>@post.Title, @post.Author</em> <br/>
-                @post.Body</li>
+                @post.Body <br/> 
+                <button @onclick="() => ViewPost(post.Id)">View Post</button>
+            </li>
         }
     </ul>
 }
@@ -40,5 +45,10 @@ else
     private async Task SearchUsers()
     {
         posts = (ICollection?)await PostService.GetPosts(title);
+    }
+
+    private void ViewPost(int postId)
+    {
+        Navigation.NavigateTo($"/Posts/{postId}");
     }
 }
