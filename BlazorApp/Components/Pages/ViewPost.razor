@@ -1,6 +1,8 @@
 ﻿@page "/Posts/{postId:int}"
+@using System.Security.Claims
 @using ApiContracts
 @using BlazorApp.Services
+@using Microsoft.AspNetCore.Components.Authorization
 @inject IPostService PostService
 @inject ICommentService CommentService
 @inject NavigationManager Navigation
@@ -28,8 +30,8 @@
 
 @code {
     [Parameter] public int postId { get; set; }
-
-    private int userId = 1; // TODO: authentification: placeholder "1"
+    [CascadingParameter] public Task<AuthenticationState> State { get; set; }
+    private int userId; // TODO: authentification: placeholder "1"
     private string body;
     private PostDto? post;
     private ICollection<CommentDto> comments = new List<CommentDto>();
@@ -46,7 +48,7 @@
         CreateCommentDto newComment = new CreateCommentDto();
         newComment.Body = body;
         newComment.PostId = postId;
-        newComment.UserId = userId;
+        newComment.UserId = userId-1;
         await CommentService.AddCommentAsync(newComment);
         
         body = string.Empty;
@@ -59,5 +61,39 @@
         post = await PostService.GetPostAsync(postId);
         comments = (await CommentService.GetComments(postId)) ?? new List<CommentDto>();
     }
+    protected override async Task OnInitializedAsync()
+    {
+        AuthenticationState authenticationState = await State;
+        ClaimsPrincipal claimsPrincipal = authenticationState.User;
+        if (claimsPrincipal.Identity is null || !claimsPrincipal.Identity.IsAuthenticated)
+        {
+            //  User not logged in
+            return;
+        }
 
+        //  Get the second on list of claims, for some reason this fixes things
+        Claim? claim = claimsPrincipal.Claims.ElementAtOrDefault(1);
+        if (claim != null && claim.Type == ClaimTypes.NameIdentifier)
+        {
+            // Retrieve the value of the NameIdentifier claim
+            // Get the value of the claim (assuming it is of type 'NameIdentifier')
+            string nameIdentifierValue = claim?.Value;
+
+            // Try to convert the string to an int
+            if (int.TryParse(nameIdentifierValue, out int parsedUserId))
+            {
+                userId = parsedUserId; // Successfully parsed the value, store it in userId
+                Console.WriteLine($"Succesfully parsed: {userId}");
+            }
+            else
+            {
+                userId = -1; // Handle parsing failure (e.g., set a default or handle error)
+                Console.WriteLine("Failed to parse user ID.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("NameIdentifier claim not found.");
+        }
+    }
 }

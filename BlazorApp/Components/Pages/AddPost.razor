@@ -1,38 +1,91 @@
 @page "/AddPost"
+@using System.Security.Claims
 @using ApiContracts
 @using BlazorApp.Services
+@using Microsoft.AspNetCore.Components.Authorization
 @inject IPostService PostService
 @inject NavigationManager Navigation
-
+@inject AuthenticationStateProvider AuthenticationStateProvider
 <PageTitle>AddPost</PageTitle>
+<AuthorizeView>
+    <Authorized>
+        <h3>Hello, @context.User.Identity?.Name</h3>
+        <h1>Add a post</h1>
 
-<h1>Add a post</h1>
-<div>
-    <label>Title:</label>
-    <InputText @bind-Value="title" class="form-control" />
-</div>
+        <div>
+            <label>Title:</label>
+            <InputText @bind-Value="title" class="form-control"/>
+        </div>
 
-<div>
-    <label>Body:</label>
-    <textarea @bind="body" rows="5" class="form-control" placeholder="Enter the post content..."></textarea>
-</div>
+        <div>
+            <label>Body:</label>
+            <textarea @bind="body" rows="5" class="form-control" placeholder="Enter the post content..."></textarea>
+        </div>
 
-<button @onclick="SubmitPost">Add</button>
-    
+        <button @onclick="SubmitPost">Add</button>
+    </Authorized>
+    <NotAuthorized>
+
+
+        lol you are not logged in!
+
+
+    </NotAuthorized>
+</AuthorizeView>
 
 
 @code {
-    private string title, body;
-
-    CreatePostDto newPost;
+    [CascadingParameter] public Task<AuthenticationState> State { get; set; }
+    private string title, body, username;
+    private int userId;
     
+
     private async Task SubmitPost()
     {
-        newPost.UserId = 1; // TODO: Authentification stuff
+        CreatePostDto newPost = new CreatePostDto();
+        Console.WriteLine(userId);
+        newPost.UserId = userId-1;
         newPost.Title = title;
         newPost.Body = body;
         await PostService.AddPostAsync(newPost);
-        
+
         Navigation.NavigateTo("/Posts");
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthenticationState authenticationState = await State;
+        ClaimsPrincipal claimsPrincipal = authenticationState.User;
+        if (claimsPrincipal.Identity is null || !claimsPrincipal.Identity.IsAuthenticated)
+        {
+            //  User not logged in
+            return;
+        }
+
+        //  Get the second on list of claims, for some reason this fixes things
+        Claim? claim = claimsPrincipal.Claims.ElementAtOrDefault(1);
+        if (claim != null && claim.Type == ClaimTypes.NameIdentifier)
+        {
+            // Retrieve the value of the NameIdentifier claim
+            // Get the value of the claim (assuming it is of type 'NameIdentifier')
+            string nameIdentifierValue = claim?.Value;
+
+            // Try to convert the string to an int
+            if (int.TryParse(nameIdentifierValue, out int parsedUserId))
+            {
+                userId = parsedUserId; // Successfully parsed the value, store it in userId
+                Console.WriteLine($"Succesfully parsed: {userId}");
+            }
+            else
+            {
+                userId = -1; // Handle parsing failure (e.g., set a default or handle error)
+                Console.WriteLine("Failed to parse user ID.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("NameIdentifier claim not found.");
+        }
+    }
+
 }
