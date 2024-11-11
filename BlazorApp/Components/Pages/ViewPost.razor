@@ -45,6 +45,9 @@
 
     private async Task SubmitComment()
     {
+        Console.WriteLine("NameIdentifier userId " + userId);
+        if(userId ==0) return;
+        
         CreateCommentDto newComment = new CreateCommentDto();
         newComment.Body = body;
         newComment.PostId = postId;

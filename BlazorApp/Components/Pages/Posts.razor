@@ -21,7 +21,7 @@
 }
 else
 {
-    <ul>
+    <ul style="display: flex; flex-direction: column-reverse;">
         @foreach (PostDto post in posts)
         {
             <li>post.Id : @post.Id <em>@post.Title, @post.Author</em> <br/>
