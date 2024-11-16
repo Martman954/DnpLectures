@@ -13,9 +13,14 @@ public class HttpUserService : IUserService
         this.client = client;
     }
 
-    public async Task<UserDto?> AdduserAsync(CreateUserDto request)
+    public async Task<UserDto?> AdduserAsync(string username, string password)
     {
-        HttpResponseMessage httpResponse = await client.PostAsJsonAsync("users", request);
+        CreateUserDto request = new CreateUserDto()
+        {
+            Username = username,
+            Password = password
+        };
+        HttpResponseMessage httpResponse = await client.PostAsJsonAsync("User", request);
         string response = await httpResponse.Content.ReadAsStringAsync();
         if (!httpResponse.IsSuccessStatusCode)
         {

@@ -1,0 +1,51 @@
+﻿@page "/AddUser"
+@using BlazorApp.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IUserService UserService;
+@inject NavigationManager Navigation
+
+<AuthorizeView>
+    <NotAuthorized>
+        <h3>AddUser</h3>
+        <h3>Please login</h3>
+        <label>User name:</label>
+        <input type="text" @bind="username"/>
+
+        <label>Password:</label>
+        <input type="password" @bind="password"/>
+        <br/>
+
+        <button @onclick='Submit'>Create a user</button>
+        @if (!string.IsNullOrEmpty(errorLabel))
+        {
+        <label style="color: red"> @errorLabel </label>
+        }
+    </NotAuthorized>
+    <Authorized>
+        <h3>Already logged in, @context.User.Identity.Name</h3>
+    </Authorized>
+</AuthorizeView>
+@code
+{
+    private string? username, password, errorLabel;
+    
+    private async Task Submit()
+    {
+        errorLabel = "";
+        if (username is null && password is null)
+        {
+            errorLabel = "Empty fields";
+            return;
+        }
+        try
+        {
+            await UserService.AdduserAsync(username,password);
+            Navigation.NavigateTo("/");
+        }
+        catch (ArgumentException e)
+        {
+            errorLabel = $"Username already taken";
+        }
+    }
+
+}

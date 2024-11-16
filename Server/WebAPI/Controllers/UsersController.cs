@@ -16,6 +16,8 @@ public class UserController(IUserRepository userRepository) : ControllerBase {
             Username = request.Username,
             Password = request.Password
         };
+        
+        
         User createdUser = await userRepository.AddAsync(user);
         UserDto userDto = new() {
             Id = createdUser.Id,

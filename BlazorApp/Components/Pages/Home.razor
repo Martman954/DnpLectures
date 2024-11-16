@@ -11,10 +11,13 @@
     <Authorized>
         <h3>Hello, @context.User.Identity?.Name</h3>
         <button @onclick="LogoutAsync">Logout</button>
+
     </Authorized>
     <NotAuthorized>
         lol you are not logged in!
         <button @onclick='() => Navigation.NavigateTo("Login")'>Login</button>
+        or create a new user
+        <button @onclick='() => Navigation.NavigateTo("AddUser")'>Create a user</button>
     </NotAuthorized>
 </AuthorizeView>
 

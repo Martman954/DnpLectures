@@ -19,6 +19,10 @@ public class UserFileRepository : IUserRepository
     {
         string usersAsJson = await File.ReadAllTextAsync(filePath);
         List<User> users = JsonSerializer.Deserialize<List<User>>(usersAsJson)!;    //  "!" is similar to making Comment nullable object
+        if (users.Any(u => u.Username == user.Username))
+        {
+            throw new ArgumentException("Username already taken");
+        }
         int maxId = users.Count > 0 ? users.Max(x => x.Id) + 1 : 1;   //  if no items in list: 1, otherwise find largest and add 1
         user.Id = maxId;
         users.Add(user);
