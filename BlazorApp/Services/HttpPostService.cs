@@ -29,7 +29,7 @@ public class HttpPostService : IPostService
     {
         HttpResponseMessage response = await client.GetAsync($"Posts?title={title}");
         string content = await response.Content.ReadAsStringAsync();
-
+        Console.WriteLine(content);
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception($"Error: (" + response.StatusCode + "), ( " + response.Content + ")");

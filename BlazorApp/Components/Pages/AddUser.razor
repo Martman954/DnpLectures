@@ -37,14 +37,16 @@
             errorLabel = "Empty fields";
             return;
         }
+
         try
         {
-            await UserService.AdduserAsync(username,password);
+            Console.WriteLine("Signing in as: '" + username + "'");
+            await UserService.AdduserAsync(username, password);
             Navigation.NavigateTo("/");
         }
-        catch (ArgumentException e)
+        catch (Exception e)
         {
-            errorLabel = $"Username already taken";
+            errorLabel = e.Message;
         }
     }
 

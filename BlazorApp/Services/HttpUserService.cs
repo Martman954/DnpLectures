@@ -41,7 +41,7 @@ public class HttpUserService : IUserService
     {
         HttpResponseMessage response = await client.GetAsync($"User?username={username}");
         string content = await response.Content.ReadAsStringAsync();
-
+        Console.Write(content);
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception($"Error: (" + response.StatusCode + "), ( " + response.Content + ")");
